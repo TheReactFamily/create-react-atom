@@ -1,3 +1,17 @@
+import { cyan } from 'chalk';
+import { Command } from 'commander';
+import prompts from 'prompts';
+
+import { createAtom } from './services/createAtom';
+
+import { convertStringToComponent } from './utils/convertStringToComponent';
+
+import type { IProgram } from './@types/Program';
+
+const packageJSON = require('../package.json');
+
+let atomName: string = '';
+let isUsingTs: boolean | undefined = undefined;
 
 export async function app() {
   const program: IProgram = new Command(packageJSON.name)
@@ -20,3 +34,15 @@ export async function app() {
 
   await createAtom(atomName, isUsingTs);
 }
+
+const checkIsUsingTs = async () => {
+  const { value } = await prompts({ initial: true, message: 'Does your component requires typescript?', name: 'value', type: 'confirm' });
+
+  return value;
+};
+
+const chooseAtomName = async () => {
+  const { answer } = await prompts({ initial: 'Button', message: 'How would like to name your atom?', name: 'answer', type: 'text' });
+
+  return convertStringToComponent(answer);
+};
